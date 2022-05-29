@@ -7,9 +7,7 @@ import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.Spec;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Command(name = "cypher", subcommands = {CommandLine.HelpCommand.class },
         description = "Caesar cypher command")
@@ -45,8 +43,6 @@ public class Cypher implements Runnable{
                 inputFile.flush();
                 line = reader.readLine();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,10 +105,6 @@ public class Cypher implements Runnable{
                     inputString.setLength(0);
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,9 +113,69 @@ public class Cypher implements Runnable{
     @Command(name = "statistical decryption", description = "Decrypt from file to file using statistical analysis") // |3|
     void statisticalDecrypt(
             @Parameters(paramLabel = "<source file>", description = "source file with encrypted text") File src,
-            @Option(names = {"-r", "--representative"}, description = "file with unencrypted representative text") File representativeFile,
             @Parameters(paramLabel = "<dest file>", description = "dest file which should have decrypted text") File dest) {
-        // TODO
+        Map<Character, Integer> map = new HashMap<>();
+        try {
+            FileReader outputFile = new FileReader(src);
+            BufferedReader reader = new BufferedReader(outputFile);
+
+            String line = reader.readLine();
+            while (line != null) {
+
+                //Считывем строку по одному char, находим его индекс в ALPHABET
+                for (int i = 0; i < line.length(); i++) {
+                    int index = Search.getIndexCharFromAlphabet(line.charAt(i));
+                    if (map.get(Search.getNewCharByIndexFromAlphabet(index)) == null) {
+                        map.put(Search.getNewCharByIndexFromAlphabet(index), 1);
+                    } else {
+                        Integer count = map.get(Search.getNewCharByIndexFromAlphabet(index));
+                        map.put(Search.getNewCharByIndexFromAlphabet(index), count + 1);
+                    }
+                }
+                line = reader.readLine();
+            }
+
+            //Находим самый часто повторяющейся в тексте символ
+            char maxChar = Collections.max(map.entrySet(), (entry1, entry2) -> entry1.getValue() - entry2.getValue()).getKey();
+            int spaceIndex = Search.getIndexCharFromAlphabet(' ');
+            int key = -1 * (Search.getIndexCharFromAlphabet(maxChar) - spaceIndex);
+
+            try {
+                FileWriter inputFile = new FileWriter(dest, false);
+                outputFile = new FileReader(src);
+                reader = new BufferedReader(outputFile);
+                line = reader.readLine();
+                while (line != null) {
+                    StringBuilder inputString = new StringBuilder();
+
+                    //Считывем строку по одному char, находим его индекс в ALPHABET
+                    for (int i = 0; i < line.length(); i++) {
+                        int index = Search.getIndexCharFromAlphabet(line.charAt(i));
+                        //Если char был найден в ALPHABET смещаем значение char на ключ и записываем в inputString
+                        if (index != -1) {
+                            index = index + key;
+                            if (index % Data.ALPHABET.length < 0) {
+                                while (index < 0) {
+                                    index = Data.ALPHABET.length + index;
+                                }
+                            }
+                            inputString.append(Search.getNewCharByIndexFromAlphabet(index));
+                        } else {
+                            throw new Exception("Совершена попытка взлома! Операция будет остановлена!");
+                        }
+                    }
+
+                    inputFile.write(inputString + "\n");
+                    inputFile.flush();
+                    line = reader.readLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -163,10 +215,6 @@ public class Cypher implements Runnable{
                 inputFile.flush();
                 line = reader.readLine();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

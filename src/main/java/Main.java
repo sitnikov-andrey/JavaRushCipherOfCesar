@@ -9,19 +9,26 @@ public class Main {
         cypher.encrypt(
                 new File("src/main/resources/encrypt/inputFile.txt"),
                 new File("src/main/resources/encrypt/outputFile.txt"),
-                115
+                1
         );
 
-        cypher.decrypt(
+        /*cypher.decrypt(
                 new File("src/main/resources/decrypt/inputFile.txt"),
                 new File("src/main/resources/decrypt/outputFile.txt"),
-                115
+                1
         );
 
-      cypher.bruteForce(
+        cypher.bruteForce(
                 new File("src/main/resources/bruteForce/inputFile.txt"),
                 new File("src/main/resources/bruteForce/representativeFile.txt"),
                 new File("src/main/resources/bruteForce/outputFile.txt")
-       );
+        );*/
+
+
+        cypher.statisticalDecrypt(
+                new File("src/main/resources/statisticalDecrypt/inputFile.txt"),
+                new File("src/main/resources/statisticalDecrypt/outputFile.txt")
+        );
+
     }
 }
