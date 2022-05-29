@@ -7,6 +7,9 @@ import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.Spec;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Command(name = "cypher", subcommands = {CommandLine.HelpCommand.class },
         description = "Caesar cypher command")
@@ -33,7 +36,8 @@ public class Cypher implements Runnable{
                     int index = Search.getIndexCharFromAlphabet(line.charAt(i));
                     //Если char был найден в ALPHABET смещаем значение char на ключ и записываем в inputString
                     if (index != -1) {
-                        inputString.append(Search.getNewCharByIndexFromAlphabet(index + key));
+                        index = index+key;
+                        inputString.append(Search.getNewCharByIndexFromAlphabet(index));
                     }
                 }
 
@@ -53,7 +57,65 @@ public class Cypher implements Runnable{
             @Parameters(paramLabel = "<source file>", description = "source file with encrypted text") File src,
             @Option(names = {"-r", "--representative"}, description = "file with unencrypted representative text") File representativeFile,
             @Parameters(paramLabel = "<dest file>", description = "dest file which should have decrypted text") File dest) {
-        // TODO
+        try {
+            FileReader representFile = new FileReader(representativeFile);
+            FileWriter inputFile = new FileWriter(dest, false);
+            //Получаем список контрольных слов
+            List<String> controlWords = Arrays.asList(new BufferedReader(representFile).readLine().split(","));
+
+            for (int key = 0; key > (Data.ALPHABET.length * -1); key--) {
+                FileReader outputFile = new FileReader(src);
+                BufferedReader reader = new BufferedReader(outputFile);
+                String line = reader.readLine();
+                List<String> allWords = new ArrayList<>();
+                StringBuilder inputString = new StringBuilder();
+
+                while (line != null) {
+                    //Считывем строку по одному char, находим его индекс в ALPHABET
+                    for (int i = 0; i < line.length(); i++) {
+
+                        int index = Search.getIndexCharFromAlphabet(line.charAt(i));
+                        //Если char был найден в ALPHABET смещаем значение char на ключ и записываем в inputString
+                        if (index != -1) {
+                            index = index+key;
+                            if (index % Data.ALPHABET.length < 0) {
+                                while (index < 0) {
+                                    index = Data.ALPHABET.length + index;
+                                }
+                            }
+                            inputString.append(Search.getNewCharByIndexFromAlphabet(index));
+                        } else {
+                            throw new Exception("Совершена попытка взлома! Операция будет остановлена!");
+                        }
+                    }
+                    inputString.append("\n");
+
+                    //В полученной строке убираем все знаки препинания и преобразуем ее в список строк.
+                    //Этот список строк добавляем в список всех слов в котором будем искать контрольные слова
+                    allWords.addAll(Arrays.asList(
+                                    inputString.toString().replaceAll("[^\\dа-яёА-ЯЁ ]", "")
+                                                          .split(" "))
+                    );
+
+                    line = reader.readLine();
+                }
+
+                //Проверяем, что все контрольные слова есть в списке
+                if (controlWords.stream().allMatch(allWords::contains)) {
+                    inputFile.write(inputString.toString());
+                    inputFile.flush();
+                    break;
+                } else {
+                    inputString.setLength(0);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Command(name = "statistical decryption", description = "Decrypt from file to file using statistical analysis") // |3|
@@ -85,7 +147,13 @@ public class Cypher implements Runnable{
                     int index = Search.getIndexCharFromAlphabet(line.charAt(i));
                     //Если char был найден в ALPHABET смещаем значение char на ключ и записываем в inputString
                     if (index != -1) {
-                        inputString.append(Search.getNewCharByIndexFromAlphabet(index + key));
+                        index = index+key;
+                        if (index % Data.ALPHABET.length < 0) {
+                            while (index < 0) {
+                                index = Data.ALPHABET.length + index;
+                            }
+                        }
+                        inputString.append(Search.getNewCharByIndexFromAlphabet(index));
                     } else {
                         throw new Exception("Совершена попытка взлома! Операция будет остановлена!");
                     }
