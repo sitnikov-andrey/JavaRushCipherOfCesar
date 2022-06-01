@@ -44,7 +44,7 @@ public class Cypher implements Runnable{
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Error(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class Cypher implements Runnable{
                 line = reader.readLine();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class Cypher implements Runnable{
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Error(e);
         }
     }
 
@@ -168,11 +168,11 @@ public class Cypher implements Runnable{
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new Error(e);
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Error(e);
         }
     }
 
