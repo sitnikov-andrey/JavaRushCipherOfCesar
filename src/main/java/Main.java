@@ -4,15 +4,14 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         boolean flag = true;
-        while (flag){
+        while (flag) {
             chooseOption();
             flag = continueOrBreak();
-
         }
 
     }
 
-    private static boolean continueOrBreak(){
+    private static boolean continueOrBreak() {
         System.out.println("Хотите продолжить работу в программе? Y/N:");
         Scanner console = new Scanner(System.in);
         String answer = console.nextLine();
@@ -27,7 +26,7 @@ public class Main {
         }
     }
 
-    private static void chooseOption(){
+    private static void chooseOption() {
         System.out.println("Выберите один из вариантов:\n" +
                 "1: Зашифровать файл\n" +
                 "2: Расшифровать файл\n" +
