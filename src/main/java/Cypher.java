@@ -9,11 +9,13 @@ import picocli.CommandLine.Spec;
 import java.io.*;
 import java.util.*;
 
-@Command(name = "cypher", subcommands = {CommandLine.HelpCommand.class },
+@Command(name = "cypher", subcommands = {CommandLine.HelpCommand.class},
         description = "Caesar cypher command")
-public class Cypher implements Runnable{
+public class Cypher implements Runnable {
 
-    @Spec CommandSpec spec;
+    @Spec
+    CommandSpec spec;
+
     @Command(name = "encrypt", description = "Encrypt from file to file using key")
     void encrypt(
             @Parameters(paramLabel = "<source file>", description = "source file with text to encrypt") File src,
@@ -34,7 +36,7 @@ public class Cypher implements Runnable{
                     int index = Search.getIndexCharFromAlphabet(line.charAt(i));
                     //Если char был найден в ALPHABET смещаем значение char на ключ и записываем в inputString
                     if (index != -1) {
-                        index = index+key;
+                        index = index + key;
                         inputString.append(Search.getNewCharByIndexFromAlphabet(index));
                     }
                 }
@@ -48,7 +50,7 @@ public class Cypher implements Runnable{
         }
     }
 
-    @Command(name = "decrypt", description = "Decrypt from file to file using statistical analysis") // |3|
+    @Command(name = "decrypt", description = "Decrypt from file to file using statistical analysis")
     void decrypt(
             @Parameters(paramLabel = "<source file>", description = "source file with encrypted text") File src,
             @Parameters(paramLabel = "<dest file>", description = "dest file which should have decrypted text") File dest,
@@ -73,7 +75,7 @@ public class Cypher implements Runnable{
         }
     }
 
-    @Command(name = "brute force", description = "Decrypt from file to file using brute force") // |3|
+    @Command(name = "brute force", description = "Decrypt from file to file using brute force")
     void bruteForce(
             @Parameters(paramLabel = "<source file>", description = "source file with encrypted text") File src,
             @Option(names = {"-r", "--representative"}, description = "file with unencrypted representative text") File representativeFile,
@@ -123,7 +125,7 @@ public class Cypher implements Runnable{
         }
     }
 
-    @Command(name = "statistical decryption", description = "Decrypt from file to file using statistical analysis") // |3|
+    @Command(name = "statistical decryption", description = "Decrypt from file to file using statistical analysis")
     void statisticalDecrypt(
             @Parameters(paramLabel = "<source file>", description = "source file with encrypted text") File src,
             @Parameters(paramLabel = "<dest file>", description = "dest file which should have decrypted text") File dest) {
@@ -183,7 +185,7 @@ public class Cypher implements Runnable{
             int index = Search.getIndexCharFromAlphabet(line.charAt(i));
             //Если char был найден в ALPHABET смещаем значение char на ключ и записываем в inputString
             if (index != -1) {
-                index = index+key;
+                index = index + key;
                 if (index % Data.ALPHABET.length < 0) {
                     while (index < 0) {
                         index = Data.ALPHABET.length + index;

@@ -5,7 +5,7 @@ public class Search {
         int firstIndex = Data.firstAlphabetIndex;
         int lastIndex = Data.lastAlphabetIndex;
         int position;
-        
+
         position = (firstIndex + lastIndex) / 2;
 
         while ((alphabet[position] != item) && (firstIndex <= lastIndex)) {
@@ -16,7 +16,7 @@ public class Search {
             }
             position = (firstIndex + lastIndex) / 2;
         }
-        
+
         if (firstIndex <= lastIndex) {
             return position;
         } else {
