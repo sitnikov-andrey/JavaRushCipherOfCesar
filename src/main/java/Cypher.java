@@ -204,8 +204,9 @@ public class Cypher implements Runnable {
         throw new ParameterException(spec.commandLine(), "Specify a subcommand");
     }
 
-    public static void main(String[] args) {
-        int exitCode = new CommandLine(new Cypher()).execute(args);
-        System.exit(exitCode);
-    }
+    //Данный метод нужен чтобы запускать программу через CommandLine. Сейчас он не актуален.
+//    public static void main(String[] args) {
+//        int exitCode = new CommandLine(new Cypher()).execute(args);
+//        System.exit(exitCode);
+//    }
 }
